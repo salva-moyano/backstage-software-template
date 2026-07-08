@@ -5,7 +5,7 @@ on:
     paths:
       - src/**
     branches:
-      - master
+      - main
 
 jobs:
   ci:
@@ -28,7 +28,6 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: ./python-app
           push: true
           tags: salvamoyanopalma/${{values.app_name}}:${{ '${{ env.COMMIT_ID }}' }}
     outputs:
