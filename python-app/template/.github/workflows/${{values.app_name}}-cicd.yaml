@@ -77,7 +77,7 @@ jobs:
         shell: bash
         run: | 
           # Connects the argocd repo
-          repo="https://github.com/salva-moyano/${{values.app_name}}.git"
+          repo="https://github.com/smpr-software/${{values.app_name}}.git"
           argocd repo list | grep -q $repo || argocd repo add $repo
 
           # Creates the argocd app
@@ -87,7 +87,7 @@ jobs:
             --dest-namespace ${{values.app_env}} \
             --dest-server https://kubernetes.default.svc \
             --values values-${{values.app_env}}.yaml \
-            --revision master \
+            --revision main \
             --sync-policy manual \
             --sync-option CreateNamespace=true
 
