@@ -44,7 +44,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4       
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ ${{ secrets.GITHUB_TOKEN }} }}
           fetch-depth: 0
 
       - name: Pull latest changes        
@@ -53,7 +53,7 @@ jobs:
 
       - name: Modify values file
         run: |
-          TAG=${{ '${{needs.ci.outputs.commit_id}}' }}"
+          TAG=${{ ${{needs.ci.outputs.commit_id}} }}"
           echo "Updating tag to: $TAG"
           /opt/homebrew/bin/yq -i ".image.tag = \"$TAG\"" charts/${{values.app_name}}/values-${{values.app_env}}.yaml
           cat charts/python-app/values.yaml
@@ -61,7 +61,7 @@ jobs:
       - name: Commit changes
         uses: EndBug/add-and-commit@v9
         with:
-          message: 'Updates values.yaml with commit ${{ '${{needs.ci.outputs.commit_id}}' }}'
+          message: 'Updates values.yaml with commit ${{ "${{needs.ci.outputs.commit_id}}" }}'
           push: 'origin main --force-with-lease'
 
       - name: Argocd app sync
