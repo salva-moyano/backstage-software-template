@@ -5,7 +5,7 @@ on:
     paths:
       - src/**
     branches:
-      - main
+      - master
 
 jobs:
   ci:
@@ -22,17 +22,17 @@ jobs:
       - name: Login to Docker hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          username: ${{ '${{ secrets.DOCKERHUB_USERNAME }}' }}
+          password: ${{ '${{ secrets.DOCKERHUB_TOKEN }}' }}
 
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: ./python-app
           push: true
-          tags: salvamoyanopalma/${{values.app_name}}:${{ env.COMMIT_ID }}
+          tags: salvamoyanopalma/${{values.app_name}}:${{ '${{ env.COMMIT_ID }}' }}
     outputs:
-      commit_id: ${{ env.COMMIT_ID }}
+      commit_id: ${{ '${{ env.COMMIT_ID }}' }}
 
   cd:
     needs: ci
@@ -54,15 +54,15 @@ jobs:
 
       - name: Modify values file
         run: |
-          TAG=${{ needs.ci.outputs.commit_id }}
+          TAG=${{ '${{needs.ci.outputs.commit_id}}' }}"
           echo "Updating tag to: $TAG"
-          /opt/homebrew/bin/yq -i ".image.tag = \"$TAG\"" charts/${{values.app_name}}/values-${{values.app_name}}.yaml 
+          /opt/homebrew/bin/yq -i ".image.tag = \"$TAG\"" charts/${{values.app_name}}/values-${{values.app_env}}.yaml
           cat charts/python-app/values.yaml
 
       - name: Commit changes
         uses: EndBug/add-and-commit@v9
         with:
-          message: 'Update values.yaml with commit ${{needs.ci.outputs.commit_id}}'
+          message: 'Updates values.yaml with commit ${{ '${{needs.ci.outputs.commit_id}}' }}'
           push: 'origin main --force-with-lease'
 
       - name: Argocd app sync
@@ -72,13 +72,13 @@ jobs:
             --insecure \
             --grpc-web \
             --username admin \
-            --password ${{ secrets.ARGOCD_PASSWORD }}
+            --password ${{ '${{ secrets.ARGOCD_PASSWORD }}' }}
 
       - name: Ensure argocd repo and app
         shell: bash
         run: | 
           # Connects the argocd repo
-          repo="https://github.com/ricardoandre-97/${{values.app_name}}.git"
+          repo="https://github.com/salva-moyano/${{values.app_name}}.git"
           argocd repo list | grep -q $repo || argocd repo add $repo
 
           # Creates the argocd app
