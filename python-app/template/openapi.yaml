@@ -1,0 +1,27 @@
+openapi: 3.0.0
+info:
+  title: ${{values.app_name}} API
+  version: 1.0.0
+  description: API REST de ${{values.app_name}}
+
+servers:
+  - url: ${{values.app_name}}-${{values.app_env}}.test.com
+    description: Local
+
+paths:
+  /api/v1/healthz:
+    get:
+      summary: Health check
+      tags:
+        - health
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
